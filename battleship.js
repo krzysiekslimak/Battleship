@@ -1,6 +1,5 @@
 
 //Widok//
-
 var view = {
 displayMessage: function(msg){
 var messageArea = document.getElementById("messageArea");
@@ -18,19 +17,17 @@ displayMiss: function(location){
 };
 
 //MODEL//
-
-
-
 var model = {
     boardSize: 7,
     numShips: 3,
     shipLength: 3,
     shipsSunk: 0,
 
-    ships: [ 
-        {locations: ["10", "20", "30"], hits: ["", "", ""]},
-        {locations: ["32", "33", "34"], hits: ["", "", ""]},
-        {locations: ["63", "64", "65"], hits: ["", "", ""]}],
+    ships: [
+        {locations: [0, 0, 0], hits: ["", "", ""]},
+        {locations: [0, 0, 0], hits: ["", "", ""]},
+        {locations: [0, 0, 0], hits: ["", "", ""]}
+    ],
 
     fire: function (guess) {
     for (var i = 0; i < this.numShips; i++) {
@@ -52,7 +49,7 @@ var model = {
     view.displayMessage("Pudło!");
     return false;
 
-},
+    },
     
     isSunk: function(ship){
         for (var i =0; i < this.shipLength; i++){
@@ -67,32 +64,49 @@ var model = {
         var locations;
         for (var i = 0; i < this.numShips; i++) {
             do {
-            location = this.generateShip();
+            locations = this.generateShip();
             } while (this.collision(locations));
-                this.ships[i].locations = locations;          
+            this.ships[i].locations = locations;          
         }
     },
-    
+
     generateShip: function () {
         var direction = Math.floor(Math.random() * 2);
         var row, col;
         if( direction === 1 ) {
-            //okret poziomy
+            row = Math.floor(Math.random() * this.boardSize);
+            col = Math.floor(Math.random() * (this.boardSize - this.shipLength));
         }else {
-            //okręt pionowy
+            row = Math.floor(Math.random() * (this.boardSize - this.shipLength));
+            col = Math.floor(Math.random() * this.boardSize);
         }  
-    }
+       
+        var newShipLocations = [];
+        for (var i= 0; i < this.shipLength; i++) {
+            if(direction === 1){
+                newShipLocations.push(row + "" + (col + i));
+            }else {
+                newShipLocations.push((row + i) + "" + col);
+            }
+        }
+        return newShipLocations;
+    },
      
    
-    
-
-    collision: function(){
-
-    }
+    collision: function(locations){
+        for (var i = 0; i < this.numShips; i++ ){
+            var ship = model.ships[i];
+            for (var j = 0; j < locations.length; j++){
+                if(ship.locations.indexOf(locations[j]) >= 0) {
+                    return true;
+                }
+            }
+        }
+        return false
+    },
 }
 
 //KONTROLER//
-
 var controller = {
     guesses: 0,
 
@@ -135,6 +149,8 @@ function init() {
     fireButton.onclick = handleFireButton;
     var guessInput = document.getElementById("guessInput");
     guessInput.onkeypress = handleKeyPress
+
+    model.generateShipLocations();
 }
 function handleFireButton () {
 var guessInput = document.getElementById("guessInput");
