@@ -25,7 +25,7 @@ var model = {
     boardSize: 7,
     numShips: 3,
     shipLength: 3,
-    shipSunk: 0,
+    shipsSunk: 0,
 
     ships: [ 
         {locations: ["10", "20", "30"], hits: ["", "", ""]},
@@ -43,7 +43,7 @@ var model = {
             view.displayHit(guess);
             view.displayMessage("TRAFIONY!");
             if (this.isSunk(ship)) {
-                this.shipSunk++;
+                this.shipsSunk++;
             }
             return true;
         }
@@ -64,18 +64,55 @@ var model = {
     },
 }
 
-model.fire("00");
-model.fire("06");
-model.fire("16");
+//KONTROLER//
 
-model.fire("10");
-model.fire("20");
-model.fire("30");
+var controller = {
+    guesses: 0,
 
-model.fire("32");
-model.fire("33");
-model.fire("34");
+    processGuess: function(guess) {
+        var location = parseGuess(guess);
+        if(location) {
+            this.guesses++;
+            var hit = model.fire(location);
+            if(hit && model.shipsSunk === model.numShips) {
+                view.displayMessage("Zatopiłeś wszystkie okręty w, " + this.guesses + " próbach." )
+            }
+        }
+    }
 
-model.fire("63");
-model.fire("65");
-model.fire("66");
+};
+
+function parseGuess(guess) {
+    var alphabet = ["A", "B", "C", "D", "E", "F", "G"];
+
+    if (guess === null || guess.length !== 2) {
+        alert("Twoje współrzędne są nieprawidłowe, wpisz literę z cyfrą.")
+    }else{
+        firstChar = guess.charAt(0);
+        var row = alphabet.indexOf(firstChar);
+        var column = guess.charAt(1);
+
+        if(isNaN(row) || isNaN(column)){
+            alert("Twoje współrzędne są nieprawidłowe, wpisz literę z cyfrą.")
+        }else if (row < 0 || row >= model.boardSize || column <0 || column >= model.boardSize){
+            alert("Strzeliłeś poza planszą!")
+        }else {
+            return row + column;
+        }
+    }
+    return null;
+}
+
+function init() {
+    var fireButton = document.getElementById("fireButton");
+    fireButton.onclick = handleFireButton;
+}
+function handleFireButton () {
+var guessInput = document.getElementById("guessInput");
+var guess = guessInput.value;
+controller.processGuess(guess);
+
+guessInput.value = "";
+}
+
+window.onload = init;
