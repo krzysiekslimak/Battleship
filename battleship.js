@@ -20,8 +20,6 @@ displayMiss: function(location){
 //MODEL//
 
 
-var 
-]
 
 var model = {
     boardSize: 7,
@@ -40,12 +38,26 @@ var model = {
             var index = ship.locations.indexOf(guess);
             if (index >= 0) {
                 ship.hits[index] = "hit";
+                view.displayHit(guess);
+                view.displayMessage("TRAFIONY!");
+                if(this.isSunk(ship)){
+                    this.shipSunk++;
+                }
                 return true;
             }else{
+                view.displayMiss(guess);
+                view.displayMessage("Pudło!");
                 return false;
             }
 
         }
-    };
-
+    },
+    isSunk: function(ship){
+        for (var i =0; i < this.shipLength; i++){
+            if(ship.hits !== "hit") {
+                return false
+            }
+            return true
+        }
+    },
 }
