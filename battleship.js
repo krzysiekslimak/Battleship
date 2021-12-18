@@ -32,26 +32,28 @@ var model = {
         {locations: ["32", "33", "34"], hits: ["", "", ""]},
         {locations: ["63", "64", "65"], hits: ["", "", ""]}],
 
-    fire: function(guess) {
-        for (var i = 0; i < this.numShips; i++) {
-            var ship = this.ships[i];
-            var index = ship.locations.indexOf(guess);
-            if (index >= 0) {
-                ship.hits[index] = "hit";
-                view.displayHit(guess);
-                view.displayMessage("TRAFIONY!");
-                if(this.isSunk(ship)){
-                    this.shipSunk++;
-                }
-                return true;
-            }else{
-                view.displayMiss(guess);
-                view.displayMessage("Pudło!");
-                return false;
+    fire: function (guess) {
+    for (var i = 0; i < this.numShips; i++) {
+        var ship = this.ships[i];
+        var index = ship
+            .locations
+            .indexOf(guess);
+        if (index >= 0) {
+            ship.hits[index] = "hit";
+            view.displayHit(guess);
+            view.displayMessage("TRAFIONY!");
+            if (this.isSunk(ship)) {
+                this.shipSunk++;
             }
-
+            return true;
         }
-    },
+    }
+    view.displayMiss(guess);
+    view.displayMessage("Pudło!");
+    return false;
+
+},
+    
     isSunk: function(ship){
         for (var i =0; i < this.shipLength; i++){
             if(ship.hits !== "hit") {
@@ -61,3 +63,19 @@ var model = {
         }
     },
 }
+
+model.fire("00");
+model.fire("06");
+model.fire("16");
+
+model.fire("10");
+model.fire("20");
+model.fire("30");
+
+model.fire("32");
+model.fire("33");
+model.fire("34");
+
+model.fire("63");
+model.fire("65");
+model.fire("66");
